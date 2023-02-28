@@ -21,6 +21,11 @@ playlist = Dir.glob('original/*.html')
 # Note: the PROLOGUE from Romeo and Juliet and the INDUCTION from Henry IV pt 2 are treated differently
 
 def parseplay(thisplay)
+  if thisplay.to_s =~ %r{original/(.*?)\.html$}
+    play_name = $1
+  else
+    raise 'failed to parse play name'
+  end
   #all_lines = File.readlines('Romeo and Juliet Entire Play.html')
   all_lines = File.readlines(thisplay)
   all_lines.each do |thisline|
@@ -155,9 +160,12 @@ def parseplay(thisplay)
       raise "failed to parse: #{thisline}"
     end
   end
-  event_list.each do |this_event|
-    print_event(this_event)
-  end
+  #event_list.each do |this_event|
+  #  print_event(this_event)
+  #end
+  output_file = File.open("json/#{play_name}.json",'w')
+  output_file.write(event_list.to_json)
+  output_file.close
 end
 
 def print_event(this_event)
