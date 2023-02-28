@@ -45,13 +45,13 @@ def parseplay(thisplay)
       this_spoken_line = $2
       type = 'spoken_line'
       string = this_spoken_line
-      print_spoken_line(string)
+      print_spoken_line(spoken_line_number,string)
     elsif thisline =~ %r{(?m)<a\s+name="speech(\d+)">\s*<b>\s*(.*?)\s*</b>\s*</a>}
       speech_number = $1
       speaker = $2
       type = 'display_speaker'
       string = speaker
-      print_new_speaker(string)
+      print_new_speaker(speech_number,string)
     elsif thisline =~ %r{(?m)<blockquote>}
       next
     elsif thisline =~ %r{(?m)</blockquote>}
@@ -94,24 +94,24 @@ def parseplay(thisplay)
   end
 end
 
-def print_spoken_line(string)
-  print "#{string}\n"
+def print_spoken_line(spoken_line_number,string)
+  print "<a name=\"#{spoken_line_number}\">#{string}</a><br>\n"
 end
 
-def print_new_speaker(string)
-  print "#{string}\n"
+def print_new_speaker(speech_number,string)
+  print "<p><a name=\"speech#{speech_number}\"><b>#{string}</b></a>\n"
 end
 
 def print_stage_instruction(string)
-  print "#{string}\n"
+  print "<p><i>#{string}</i></p>\n"
 end
 
 def print_act(string)
-  print "#{string}\n"
+  print "<p>\n</p><h3>#{string}</h3>\n"
 end
 
 def print_scene(string)
-  print "#{string}\n"
+  print "<p>\n</p><h3>#{string}</h3>\n"
 end
 
 playlist.each do |thisplay|
