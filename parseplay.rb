@@ -18,6 +18,7 @@ playlist = Dir.glob('original/*.html')
 # for parsing purposes we need to be able to make sure all this information is stored or calculable
 # for manipulation purposes we should perhaps not restrict the line numbers to actual numbers but to sortable versions thereof so insertions may be made at will
 # e.g. 3.2.7a may be inserted between 3.2.7 and 3.2.8
+# Note: the PROLOGUE from Romeo and Juliet and the INDUCTION from Henry IV pt 2 are treated differently
 
 def parseplay(thisplay)
   #all_lines = File.readlines('Romeo and Juliet Entire Play.html')
@@ -64,16 +65,27 @@ def parseplay(thisplay)
     elsif thisline =~ %r{(?m)<h3>\s*(ACT\s+\w+)\s*</h3>}
       thisact = $1
       #print "BEGINACT: #{thisact}"
+      type = 'displayact'
+      string = thisact
       print "#{thisact}"
     elsif thisline =~ %r{(?m)<h3>\s*(SCENE\s+[^<]*?)\s*</h3>}
       thisscene = $1
+      type = 'displayscene'
+      string = thisscene
       print "#{thisscene}"
     elsif thisline =~ %r{(?m)<h3>\s*(PROLOGUE)\s*</h3>}
-      speaker = "PROLOGUE"
+      thisscene = $1
+      type = 'displayscene'
+      #speaker = "PROLOGUE"
       #print "PROLOGUESPEAKER"
+      string = thisscene
+      print "#{thisscene}"
     elsif thisline =~ %r{(?m)<h3>\s*(INDUCTION)\s*</h3>}
-      speaker = "INDUCTION"
+      thisscene = $1
+      type = 'displayscene'
       #print "PROLOGUESPEAKER"
+      string = thisscene
+      print "#{thisscene}"
     else
       #print "OTHER"
       raise "failed to parse: #{thisline}"
