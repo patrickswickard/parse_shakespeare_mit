@@ -29,8 +29,12 @@ def parseplay(thisplay)
     end
   end
 
+  event_list = []
   speaker = "EMPTY"
   started = false
+  event = 0
+  current_speaker = nil
+  current_speech = nil
   all_lines.each do |thisline|
     unless started
       if thisline =~ %r{(?m)</table>}
@@ -43,15 +47,32 @@ def parseplay(thisplay)
     if thisline =~ %r{(?m)<a\s+name="(\d+\.\d+\.\d+\w*)">\s*(.*?)\s*</a>}
       spoken_line_number = $1
       this_spoken_line = $2
+      this_event = {}
       type = 'spoken_line'
       string = this_spoken_line
-      print_spoken_line(spoken_line_number,string)
+      this_event = {
+        'type' => type,
+        'string' => string,
+        'speaker' => current_speaker,
+        'speech' => current_speech,
+        'spoken_line_number' => spoken_line_number,
+      }
+      event_list.push(this_event)
     elsif thisline =~ %r{(?m)<a\s+name="speech(\d+)">\s*<b>\s*(.*?)\s*</b>\s*</a>}
       speech_number = $1
       speaker = $2
       type = 'display_speaker'
+      current_speaker = speaker
+      current_speech = speech_number
       string = speaker
-      print_new_speaker(speech_number,string)
+      this_event = {
+        'type' => type,
+        'string' => string,
+        'speaker' => current_speaker,
+        'speech' => current_speech,
+        'spoken_line_number' => spoken_line_number,
+      }
+      event_list.push(this_event)
     elsif thisline =~ %r{(?m)<blockquote>}
       next
     elsif thisline =~ %r{(?m)</blockquote>}
@@ -62,55 +83,122 @@ def parseplay(thisplay)
       stage_instruction = $1
       type = 'stage_instruction'
       string = stage_instruction
-      print_stage_instruction(string)
+      this_event = {
+        'type' => type,
+        'string' => string,
+        'speaker' => nil,
+        'speech' => nil,
+        'spoken_line_number' => nil,
+      }
+      event_list.push(this_event)
     elsif thisline =~ %r{(?m)<i>\s*(.*?)\s*</i>}
       stage_instruction = $1
       type = 'stage_instruction'
       string = stage_instruction
-      print_stage_instruction(string)
+      this_event = {
+        'type' => type,
+        'string' => string,
+        'speaker' => nil,
+        'speech' => nil,
+        'spoken_line_number' => nil,
+      }
+      event_list.push(this_event)
     elsif thisline =~ %r{(?m)<h3>\s*(ACT\s+\w+)\s*</h3>}
       thisact = $1
       type = 'display_act'
       string = thisact
-      print_act(string)
+      this_event = {
+        'type' => type,
+        'string' => string,
+        'speaker' => nil,
+        'speech' => nil,
+        'spoken_line_number' => nil,
+      }
+      event_list.push(this_event)
     elsif thisline =~ %r{(?m)<h3>\s*(SCENE\s+[^<]*?)\s*</h3>}
       thisscene = $1
       type = 'display_scene'
       string = thisscene
-      print_scene(string)
+      this_event = {
+        'type' => type,
+        'string' => string,
+        'speaker' => nil,
+        'speech' => nil,
+        'spoken_line_number' => nil,
+      }
+      event_list.push(this_event)
     elsif thisline =~ %r{(?m)<h3>\s*(PROLOGUE)\s*</h3>}
       thisscene = $1
       type = 'display_scene'
       string = thisscene
-      print_scene(string)
+      this_event = {
+        'type' => type,
+        'string' => string,
+        'speaker' => nil,
+        'speech' => nil,
+        'spoken_line_number' => nil,
+      }
+      event_list.push(this_event)
     elsif thisline =~ %r{(?m)<h3>\s*(INDUCTION)\s*</h3>}
       thisscene = $1
       type = 'displayscene'
       string = thisscene
-      print_scene(string)
+      this_event = {
+        'type' => type,
+        'string' => string,
+        'speaker' => nil,
+        'speech' => nil,
+        'spoken_line_number' => nil,
+      }
+      event_list.push(this_event)
     else
       raise "failed to parse: #{thisline}"
     end
   end
+  event_list.each do |this_event|
+    print_event(this_event)
+  end
 end
 
-def print_spoken_line(spoken_line_number,string)
+def print_event(this_event)
+  case this_event['type']
+  when 'spoken_line'
+    print_spoken_line(this_event)
+  when 'display_speaker'
+    print_new_speaker(this_event)
+  when 'stage_instruction'
+    print_stage_instruction(this_event)
+  when 'display_act'
+    print_act(this_event)
+  when 'display_scene'
+    print_scene(this_event)
+  end
+end
+
+def print_spoken_line(this_event)
+  spoken_line_number = this_event['spoken_line_number']
+  string = this_event['string']
   print "<a name=\"#{spoken_line_number}\">#{string}</a><br>\n"
 end
 
-def print_new_speaker(speech_number,string)
+def print_new_speaker(this_event)
+  speech_number = this_event['speech']
+  string = this_event['string']
   print "<p><a name=\"speech#{speech_number}\"><b>#{string}</b></a>\n"
 end
 
-def print_stage_instruction(string)
+def print_stage_instruction(this_event)
+  string = this_event['string']
   print "<p><i>#{string}</i></p>\n"
 end
 
-def print_act(string)
+def print_act(this_event)
+  string = this_event['string']
   print "<p>\n</p><h3>#{string}</h3>\n"
 end
 
-def print_scene(string)
+def print_scene(this_event)
+  string = this_event['string']
   print "<p>\n</p><h3>#{string}</h3>\n"
 end
 
