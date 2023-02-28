@@ -43,54 +43,75 @@ def parseplay(thisplay)
     if thisline =~ %r{(?m)<a\s+name="(\d+\.\d+\.\d+\w*)">\s*(.*?)\s*</a>}
       spoken_line_number = $1
       this_spoken_line = $2
-      print "#{this_spoken_line}\n"
+      type = 'spoken_line'
+      string = this_spoken_line
+      print_spoken_line(string)
     elsif thisline =~ %r{(?m)<a\s+name="speech(\d+)">\s*<b>\s*(.*?)\s*</b>\s*</a>}
       speech_number = $1
       speaker = $2
+      type = 'display_speaker'
+      string = speaker
+      print_new_speaker(string)
     elsif thisline =~ %r{(?m)<blockquote>}
-      print "#{speaker}: "
+      next
     elsif thisline =~ %r{(?m)</blockquote>}
-      #print "ENDSPEECH\n"
       next
     elsif thisline =~ %r{(?m)^\s*$}
-      #print "EMPTYLINE\n"
       next
     elsif thisline =~ %r{(?m)<p>\s*<i>\s*(.*?)\s*</i>\s*</p>}
       stage_instruction = $1
-      #print "STAGEINSTRUCTION: #{stage_instruction}\n"
+      type = 'stage_instruction'
+      string = stage_instruction
+      print_stage_instruction(string)
     elsif thisline =~ %r{(?m)<i>\s*(.*?)\s*</i>}
       stage_instruction = $1
-      #print "STAGEINSTRUCTION: #{stage_instruction}\n"
-      print "#{stage_instruction}\n"
+      type = 'stage_instruction'
+      string = stage_instruction
+      print_stage_instruction(string)
     elsif thisline =~ %r{(?m)<h3>\s*(ACT\s+\w+)\s*</h3>}
       thisact = $1
-      #print "BEGINACT: #{thisact}"
-      type = 'displayact'
+      type = 'display_act'
       string = thisact
-      print "#{thisact}"
+      print_act(string)
     elsif thisline =~ %r{(?m)<h3>\s*(SCENE\s+[^<]*?)\s*</h3>}
       thisscene = $1
-      type = 'displayscene'
+      type = 'display_scene'
       string = thisscene
-      print "#{thisscene}"
+      print_scene(string)
     elsif thisline =~ %r{(?m)<h3>\s*(PROLOGUE)\s*</h3>}
       thisscene = $1
-      type = 'displayscene'
-      #speaker = "PROLOGUE"
-      #print "PROLOGUESPEAKER"
+      type = 'display_scene'
       string = thisscene
-      print "#{thisscene}"
+      print_scene(string)
     elsif thisline =~ %r{(?m)<h3>\s*(INDUCTION)\s*</h3>}
       thisscene = $1
       type = 'displayscene'
-      #print "PROLOGUESPEAKER"
       string = thisscene
-      print "#{thisscene}"
+      print_scene(string)
     else
-      #print "OTHER"
       raise "failed to parse: #{thisline}"
     end
   end
+end
+
+def print_spoken_line(string)
+  print "#{string}\n"
+end
+
+def print_new_speaker(string)
+  print "#{string}\n"
+end
+
+def print_stage_instruction(string)
+  print "#{string}\n"
+end
+
+def print_act(string)
+  print "#{string}\n"
+end
+
+def print_scene(string)
+  print "#{string}\n"
 end
 
 playlist.each do |thisplay|
