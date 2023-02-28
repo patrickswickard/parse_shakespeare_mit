@@ -2,6 +2,23 @@ require 'json'
 
 playlist = Dir.glob('original/*.html')
 
+# structure of html files for display purposes is such that every line is:
+# 1.  display ACT number or PROLOGUE or similar
+# 2.  display scene number
+# 3.  stage direction
+# 4.  new speaker name
+# 5.  spoken line
+# Additionally within the code each new speaker prompts a "speech number"
+# for that act/scene "speech1" etc
+# Also each spoken line is associated with a string which gives the
+# act and scene and the line number within that scene
+# e.g. Line 3.2.7 is the seventh spoken line of act 3 scene 2 and is part
+# of speech2 spoken by PUCK in Midsummer Night's Dream
+#
+# for parsing purposes we need to be able to make sure all this information is stored or calculable
+# for manipulation purposes we should perhaps not restrict the line numbers to actual numbers but to sortable versions thereof so insertions may be made at will
+# e.g. 3.2.7a may be inserted between 3.2.7 and 3.2.8
+
 def parseplay(thisplay)
   #all_lines = File.readlines('Romeo and Juliet Entire Play.html')
   all_lines = File.readlines(thisplay)
