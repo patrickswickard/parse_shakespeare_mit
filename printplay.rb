@@ -47,6 +47,8 @@ end
 def print_spoken_line(this_event)
   spoken_line_number = this_event['spoken_line_number']
   string = this_event['string']
+  # put stage directions in spoken lines in italics
+  string = string.to_s.gsub(/\[/,'<i>[').gsub(/\]/,']</i>')
   return "<a name=\"#{spoken_line_number}\">#{string}</a><br>\n"
 end
 
