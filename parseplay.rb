@@ -171,43 +171,44 @@ end
 def print_event(this_event)
   case this_event['type']
   when 'spoken_line'
-    print_spoken_line(this_event)
+    event_string = print_spoken_line(this_event)
   when 'display_speaker'
-    print_new_speaker(this_event)
+    event_string = print_new_speaker(this_event)
   when 'stage_instruction'
-    print_stage_instruction(this_event)
+    event_string = print_stage_instruction(this_event)
   when 'display_act'
-    print_act(this_event)
+    event_string = print_act(this_event)
   when 'display_scene'
-    print_scene(this_event)
+    event_string = print_scene(this_event)
   end
+  print event_string
 end
 
 def print_spoken_line(this_event)
   spoken_line_number = this_event['spoken_line_number']
   string = this_event['string']
-  print "<a name=\"#{spoken_line_number}\">#{string}</a><br>\n"
+  return "<a name=\"#{spoken_line_number}\">#{string}</a><br>\n"
 end
 
 def print_new_speaker(this_event)
   speech_number = this_event['speech']
   string = this_event['string']
-  print "<p><a name=\"speech#{speech_number}\"><b>#{string}</b></a>\n"
+  return "</blockquote>\n\n<a name=\"speech#{speech_number}\"><b>#{string}</b></a>\n<blockquote>\n"
 end
 
 def print_stage_instruction(this_event)
   string = this_event['string']
-  print "<p><i>#{string}</i></p>\n"
+  return "<p><i>#{string}</i></p>\n"
 end
 
 def print_act(this_event)
   string = this_event['string']
-  print "<p>\n</p><h3>#{string}</h3>\n"
+  return "<p>\n</p><h3>#{string}</h3>\n"
 end
 
 def print_scene(this_event)
   string = this_event['string']
-  print "<p>\n</p><h3>#{string}</h3>\n"
+  return "<p>\n</p><h3>#{string}</h3>\n"
 end
 
 playlist.each do |thisplay|
