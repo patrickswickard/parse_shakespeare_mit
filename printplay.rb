@@ -14,6 +14,13 @@ def printplay(thisplay)
   thisplayhash = File.read(thisplay)
   event_list = JSON.parse(thisplayhash)
   output_file = File.open("cleaned/#{play_name}.html",'w')
+  if play_name =~ %r{^(.*?)\s+Entire\s+Play$}
+    play_name_clean = $1
+    title_string = "<h1>#{play_name_clean}</h1>\n"
+    output_file.write(title_string)
+  else
+    raise 'could not parse play name'
+  end
   #output_file.write(event_list.to_json)
   event_list.each do |this_event|
     print_event(this_event, output_file)

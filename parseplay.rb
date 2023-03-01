@@ -34,12 +34,18 @@ def parseplay(thisplay)
     end
   end
 
+  if play_name =~ %r{^(.*?)\s+Entire\s+Play$}
+    play_name_clean = $1
+  else
+    raise 'could not parse play name'
+  end
   event_list = []
   speaker = "EMPTY"
   started = false
   event = 0
   current_speaker = nil
   current_speech = nil
+  full_speech_number = nil
   all_lines.each do |thisline|
     unless started
       if thisline =~ %r{(?m)</table>}
@@ -52,10 +58,22 @@ def parseplay(thisplay)
     if thisline =~ %r{(?m)<a\s+name="(\d+\.\d+\.\d+\w*)">\s*(.*?)\s*</a>}
       spoken_line_number = $1
       this_spoken_line = $2
+      # we have to calculate the full speech number from information not previously available
+      if spoken_line_number =~ %r{^(\d+)\.(\d+)\.\d+\w*$}
+        act = $1
+        scene = $2
+        full_speech_number = "#{act}.#{scene}.#{current_speech}"
+      else
+        raise "Error: failed to parse spoken line number #{spoken_line_number}"
+      end
       this_event = {}
       type = 'spoken_line'
       string = this_spoken_line
       this_event = {
+        'play_name' => play_name_clean,
+        'act' => act,
+        'scene' => scene,
+        'full_speech_number' => full_speech_number,
         'type' => type,
         'string' => string,
         'speaker' => current_speaker,
@@ -71,6 +89,10 @@ def parseplay(thisplay)
       current_speech = speech_number
       string = speaker
       this_event = {
+        'play_name' => nil,
+        'act' => nil,
+        'scene' => nil,
+        'full_speech_number' => nil,
         'type' => type,
         'string' => string,
         'speaker' => current_speaker,
@@ -89,6 +111,10 @@ def parseplay(thisplay)
       type = 'stage_instruction'
       string = stage_instruction
       this_event = {
+        'play_name' => nil,
+        'act' => nil,
+        'scene' => nil,
+        'full_speech_number' => nil,
         'type' => type,
         'string' => string,
         'speaker' => nil,
@@ -101,6 +127,10 @@ def parseplay(thisplay)
       type = 'stage_instruction'
       string = stage_instruction
       this_event = {
+        'play_name' => nil,
+        'act' => nil,
+        'scene' => nil,
+        'full_speech_number' => nil,
         'type' => type,
         'string' => string,
         'speaker' => nil,
@@ -113,6 +143,10 @@ def parseplay(thisplay)
       type = 'display_act'
       string = thisact
       this_event = {
+        'play_name' => nil,
+        'act' => nil,
+        'scene' => nil,
+        'full_speech_number' => nil,
         'type' => type,
         'string' => string,
         'speaker' => nil,
@@ -125,6 +159,10 @@ def parseplay(thisplay)
       type = 'display_scene'
       string = thisscene
       this_event = {
+        'play_name' => nil,
+        'act' => nil,
+        'scene' => nil,
+        'full_speech_number' => nil,
         'type' => type,
         'string' => string,
         'speaker' => nil,
@@ -137,6 +175,10 @@ def parseplay(thisplay)
       type = 'display_scene'
       string = thisscene
       this_event = {
+        'play_name' => nil,
+        'act' => nil,
+        'scene' => nil,
+        'full_speech_number' => nil,
         'type' => type,
         'string' => string,
         'speaker' => nil,
@@ -149,6 +191,10 @@ def parseplay(thisplay)
       type = 'displayscene'
       string = thisscene
       this_event = {
+        'play_name' => nil,
+        'act' => nil,
+        'scene' => nil,
+        'full_speech_number' => nil,
         'type' => type,
         'string' => string,
         'speaker' => nil,
