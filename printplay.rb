@@ -65,12 +65,12 @@ end
 
 def print_act(this_event)
   string = this_event['string']
-  return "<p>\n</p><h3>#{string}</h3>\n"
+  return "</blockquote>\s<p>\n</p><h3>#{string}</h3>\n"
 end
 
 def print_scene(this_event)
   string = this_event['string']
-  return "<p>\n</p><h3>#{string}</h3>\n"
+  return "</blockquote>\s<p>\n</p><h3>#{string}</h3>\n"
 end
 
 playlist.each do |thisplay|
